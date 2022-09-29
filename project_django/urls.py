@@ -21,5 +21,4 @@ urlpatterns = [
     path('', include('example_app.urls')),
     path('wishlist/', include('wishlist.urls')),
     
-    
 ]
