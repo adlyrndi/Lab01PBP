@@ -1,5 +1,6 @@
 import datetime
-from django.http import HttpResponseRedirect
+import json
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login
@@ -22,6 +23,30 @@ def show_wishlist(request):
         'last_login': request.COOKIES['last_login'],
     }
     return render(request, "wishlist.html", context)
+
+@login_required(login_url='/wishlist/login/')
+def show_wishlist_ajax(request):
+    context = {
+        'last_login': request.COOKIES['last_login'],
+    }
+    
+    return render(request, "wishlist_ajax.html", context)
+
+def submit_data(request):
+    if request.method == 'POST':
+        harga_barang = request.POST['harga_barang']
+        nama_barang = request.POST['nama_barang']
+        deskripsi = request.POST['deskripsi']
+        wishlist_data = BarangWishlist(nama_barang=nama_barang, deskripsi=deskripsi, harga_barang=harga_barang)
+        wishlist_data.save()
+        data = {
+            "message": 'Data telah tersubmit!'
+        }
+        object_json = json.dumps(data, indent = 4) 
+
+        return JsonResponse(json.loads(object_json))
+    return render(request, 'create_list.html')
+    
 def register(request):
     form = UserCreationForm()
 

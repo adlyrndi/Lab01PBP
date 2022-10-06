@@ -1,0 +1,100 @@
+<style>
+    .login {
+        color: #851515;
+
+    }
+    body{
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(120deg,#2980b9, #8e44ad);
+        height: 100vh;
+        overflow: hidden;
+    }
+    td{
+        display: grid;
+        justify-content: center;
+    }
+    input{
+        display: grid;
+        justify-content: center;
+    }
+
+</style>>
+
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div class = "login">
+
+    <h1>Buat List!</h1>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <label for="harga_barang">Masukan Harga Barang !</label>
+                <input name="harga_barang" id="harga_barang" placeholder="Harga Barang" class="form-control"/>
+            </tr>
+                
+            <tr>
+                <label for="nama_barang">Masukan Nama Barang!</label>
+                <input type="text"name="nama_barang" id="nama_barang" placeholder="Nama Barang" class="form-control"/>
+            </tr>
+
+            <tr>
+                <label for="deskripsi">Deskripsi</label>
+                <input name="deskripsi" id="deskripsi" placeholder="Deskripsi" class="form-control"/>
+            </tr>
+
+            <tr>
+                <td>
+                    <button class="btn btn-success">Submit</button> 
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}     
+        
+    Belum mempunyai akun? <a href="{% url 'wishlist:register' %}">Buat Akun</a>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('form').submit(function (event) {
+      const formData = {
+        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+        nama_barang: $('#nama_barang').val(),
+        harga_barang: parseInt($('#harga_barang').val()),
+        deskripsi: $('#deskripsi').val(),
+      };
+
+      $.ajax({
+        type: 'POST',
+        url: '/wishlist/ajax/submit',
+        data: formData,
+        dataType: 'json',
+        encode: true,
+      }).done(function (data) {
+        $('#message').text(data.message);
+      });
+
+      event.preventDefault();
+    });
+  });
+</script>
+
+{% endblock content %}
